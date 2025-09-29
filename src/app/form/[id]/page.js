@@ -9,7 +9,7 @@ export default function FormPage({ params }) {
   const router = useRouter();
   const { id } = use(params);
   const isNew = id === 'new';
-  
+
   const [formData, setFormData] = useState({
     situation: '',
     thought: '',
@@ -18,7 +18,7 @@ export default function FormPage({ params }) {
     otherEmotion: '',
     isDraft: true
   });
-  
+
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
@@ -67,7 +67,7 @@ export default function FormPage({ params }) {
 
   const saveDraft = async () => {
     if (!formData.situation && !formData.thought) return;
-    
+
     setSaving(true);
     try {
       const now = new Date().toISOString();
@@ -84,7 +84,7 @@ export default function FormPage({ params }) {
       } else {
         await db.thoughts.update(parseInt(id), dataToSave);
       }
-      
+
       setLastSaved(now);
     } catch (error) {
       console.error('Error saving draft:', error);
@@ -96,7 +96,7 @@ export default function FormPage({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    
+
     try {
       const now = new Date().toISOString();
       const dataToSave = {
@@ -130,7 +130,7 @@ export default function FormPage({ params }) {
   const handleEmotionChange = (emotion, checked) => {
     setFormData(prev => ({
       ...prev,
-      emotions: checked 
+      emotions: checked
         ? [...prev.emotions, emotion]
         : prev.emotions.filter(e => e !== emotion)
     }));
@@ -147,19 +147,19 @@ export default function FormPage({ params }) {
 
   if (loading) {
     return (
-      <main className="container">
+      <main>
         <h1>Loading...</h1>
       </main>
     );
   }
 
   return (
-    <main className="container">
+    <main>
       <header>
-        <h1>Distancing from Thoughts</h1>
-        <div className="form-status">
+        <h1>Distance from Thoughts</h1>
+        <div>
           {lastSaved && (
-            <span className="draft-indicator">
+            <span>
               DRAFT SAVED {formatLastSaved(lastSaved)}
             </span>
           )}
@@ -168,70 +168,70 @@ export default function FormPage({ params }) {
       </header>
 
       <form onSubmit={handleSubmit}>
-          <label htmlFor="situation">
-            What situation prompted the thought?
-          </label>
-          <textarea
-            id="situation"
-            value={formData.situation}
-            onChange={(e) => handleInputChange('situation', e.target.value)}
-            placeholder="Describe the situation that led to this thought..."
-            rows="4"
-            style={{ resize: "none" }}
-          />
+        <label htmlFor="situation">
+          What situation prompted the thought?
+        </label>
+        <textarea
+          id="situation"
+          value={formData.situation}
+          onChange={(e) => handleInputChange('situation', e.target.value)}
+          placeholder="Describe the situation that led to this thought..."
+          rows="4"
+          style={{ resize: "none" }}
+        />
 
-          <label htmlFor="thought">
-            What thought am I trying to create distance from?
-          </label>
+        <label htmlFor="thought">
+          What thought am I trying to create distance from?
+        </label>
+        <input
+          type="text"
+          id="thought"
+          value={formData.thought}
+          onChange={(e) => handleInputChange('thought', e.target.value)}
+          placeholder="Write down the specific thought you want to distance yourself from..."
+        />
+
+        <label htmlFor="distressLevel">
+          How much distress am I experiencing because of this thought right now?
+        </label>
+        <div className="slider-container">
           <input
-            type="text"
-            id="thought"
-            value={formData.thought}
-            onChange={(e) => handleInputChange('thought', e.target.value)}
-            placeholder="Write down the specific thought you want to distance yourself from..."
+            type="range"
+            id="distressLevel"
+            min="0"
+            max="10"
+            value={formData.distressLevel}
+            onChange={(e) => handleInputChange('distressLevel', parseInt(e.target.value))}
           />
+          <span className="slider-value">{formData.distressLevel}</span>
+        </div>
 
-          <label htmlFor="distressLevel">
-            How much distress am I experiencing because of this thought right now?
-          </label>
-          <div className="slider-container">
-            <input
-              type="range"
-              id="distressLevel"
-              min="0"
-              max="10"
-              value={formData.distressLevel}
-              onChange={(e) => handleInputChange('distressLevel', parseInt(e.target.value))}
-            />
-            <span className="slider-value">{formData.distressLevel}</span>
-          </div>
+        <label>What emotions do I notice when this thought comes up?</label>
+        <div className="emotions-grid">
+          {emotionOptions.map((emotion) => (
+            <button
+              key={emotion}
+              type="button"
+              className={`emotion-button ${formData.emotions.includes(emotion) ? 'pressed' : ''}`}
+              onClick={() => handleEmotionChange(emotion, !formData.emotions.includes(emotion))}
+            >
+              {emotion}
+            </button>
+          ))}
+        </div>
 
-          <label>What emotions do I notice when this thought comes up?</label>
-          <div className="emotions-grid">
-            {emotionOptions.map((emotion) => (
-              <button
-                key={emotion}
-                type="button"
-                className={`emotion-button ${formData.emotions.includes(emotion) ? 'pressed' : ''}`}
-                onClick={() => handleEmotionChange(emotion, !formData.emotions.includes(emotion))}
-              >
-                {emotion}
-              </button>
-            ))}
-          </div>
-          
-          <label htmlFor="otherEmotion">
-            Other emotion:
-          </label>
-          <input
-            type="text"
-            id="otherEmotion"
-            value={formData.otherEmotion}
-            onChange={(e) => handleInputChange('otherEmotion', e.target.value)}
-            placeholder="Describe any other emotions..."
-          />
+        <label htmlFor="otherEmotion">
+          Other emotion(s):
+        </label>
+        <input
+          type="text"
+          id="otherEmotion"
+          value={formData.otherEmotion}
+          onChange={(e) => handleInputChange('otherEmotion', e.target.value)}
+          placeholder="Describe any other emotions..."
+        />
 
-        <div className="form-actions">
+        <div>
           <button type="submit" disabled={saving}>
             {saving ? 'Saving...' : 'Submit'}
           </button>

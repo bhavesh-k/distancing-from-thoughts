@@ -85,8 +85,8 @@ export default function ViewPage({ params }) {
           <h2>Distress Level</h2>
           <div className="distress-display">
             <div className="distress-bar">
-              <div 
-                className="distress-fill" 
+              <div
+                className="distress-fill"
                 style={{ width: `${(thought.distressLevel / 10) * 100}%` }}
               ></div>
             </div>
@@ -107,7 +107,7 @@ export default function ViewPage({ params }) {
           ) : (
             <p>No emotions recorded</p>
           )}
-          
+
           {thought.otherEmotion && (
             <div className="other-emotion">
               <strong>Other:</strong> {thought.otherEmotion}

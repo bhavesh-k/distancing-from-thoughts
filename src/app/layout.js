@@ -1,8 +1,9 @@
-import "./mvp.css";
-import "./globals.css";
+import "./styles/normalize.css";
+import "./styles/mvp.css";
+import "./styles/globals.css";
 
 export const metadata = {
-  title: "Distancing from Thoughts",
+  title: "Distance from Thoughts",
   description: "A mental wellbeing app to help you create distance from persistent negative thoughts",
 };
 

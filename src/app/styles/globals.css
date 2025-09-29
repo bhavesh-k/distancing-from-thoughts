@@ -3,8 +3,9 @@
 /* Override MVP.css */
 :root {
   --color-link: #7959fb; /* Soothing lavender */
+  --color-text: rgb(45, 45, 45);
+  --border-radius: 30px;
 }
-
 
 .slider-container {
   display: flex;
