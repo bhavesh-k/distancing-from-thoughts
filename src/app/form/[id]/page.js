@@ -22,6 +22,8 @@ export default function FormPage({ params }) {
     bodySensations: '',
     valuesInterference: 0,
     beliefStrength: 0,
+    strategies: [],
+    alternativeActions: '',
     postDistancingValuesInterference: 0,
     postDistancingBeliefStrength: 0,
     whatFeelsPossible: '',
@@ -36,6 +38,16 @@ export default function FormPage({ params }) {
     'Angry 😡', 'Frustrated 😤', 'Upset 😩', 'Sad 😢', 'Hurt 🤕', 'Envious 👀',
     'Jealous 😖', 'Annoyed 😠', 'Blasé 😒', 'Afraid 😱', 'Worried 😟', 'Embarrassed 🫣', 'Guilty 😔', 'Hopeless 😞'
   ].sort(() => Math.random() - 0.5));
+
+  const [strategyOptions] = useState([
+    'Remind myself I don\'t have to believe everything I think',
+    'Remind myself that thoughts are productions of my brain',
+    'Label the thought passing through me in 3rd person ("The thought that XYZ is going through Sara\'s mind")',
+    'Imagine the thought passing along on a cloud in the sky',
+    'Imagine the thought is being said in a funny voice or on a TV show',
+    'Ask myself "Where did this thought come from?" and observe with curiosity',
+    'Remind myself of other times when I had different thoughts'
+  ]);
 
   useEffect(() => {
     if (!isNew) {
@@ -67,6 +79,8 @@ export default function FormPage({ params }) {
           bodySensations: thought.bodySensations || '',
           valuesInterference: thought.valuesInterference || 0,
           beliefStrength: thought.beliefStrength || 0,
+          strategies: thought.strategies || [],
+          alternativeActions: thought.alternativeActions || '',
           postDistancingValuesInterference: thought.postDistancingValuesInterference || 0,
           postDistancingBeliefStrength: thought.postDistancingBeliefStrength || 0,
           whatFeelsPossible: thought.whatFeelsPossible || '',
@@ -149,6 +163,15 @@ export default function FormPage({ params }) {
       emotions: checked
         ? [...prev.emotions, emotion]
         : prev.emotions.filter(e => e !== emotion)
+    }));
+  };
+
+  const handleStrategyChange = (strategy, checked) => {
+    setFormData(prev => ({
+      ...prev,
+      strategies: checked
+        ? [...prev.strategies, strategy]
+        : prev.strategies.filter(s => s !== strategy)
     }));
   };
 
@@ -255,7 +278,26 @@ export default function FormPage({ params }) {
           onChange={(value) => handleInputChange('beliefStrength', value)}
         />
 
-        <section><aside><h3>TODO: PLACEHOLDER FOR STRATEGIES TO CREATE DISTANCE FROM THE THOUGHT</h3></aside></section>
+        <label>What strategies I am willing to do <u>now</u> to create distance between me and my thoughts?</label>
+        <div className="strategies-list">
+          {strategyOptions.map((strategy) => (
+            <button
+              key={strategy}
+              type="button"
+              className={`strategy-button ${formData.strategies.includes(strategy) ? 'pressed' : ''}`}
+              onClick={() => handleStrategyChange(strategy, !formData.strategies.includes(strategy))}
+            >
+              {strategy}
+            </button>
+          ))}
+        </div>
+
+        <TextArea
+          id="alternativeActions"
+          label="Imagine what I would do if I did not believe this thought?"
+          value={formData.alternativeActions}
+          onChange={(value) => handleInputChange('alternativeActions', value)}
+        />
 
         <Slider
           id="postDistancingValuesInterference"
