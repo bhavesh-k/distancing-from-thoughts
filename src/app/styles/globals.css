@@ -2,9 +2,15 @@
 
 /* Override MVP.css */
 :root {
+  --color-bg: #fbfbfb;
   --color-link: #7959fb; /* Soothing lavender */
-  --color-text: rgb(45, 45, 45);
+  --color-text: rgb(70, 70, 70);
   --border-radius: 30px;
+  --chill-border-radius: 10px;
+}
+
+textarea, form {
+  border-radius: var(--chill-border-radius);
 }
 
 .slider-container {
@@ -15,10 +21,11 @@
 
 .slider-container input[type="range"] {
   accent-color: var(--color-link);
-  flex: 1 1 0%;
   width: 100%;
-  min-width: 0;
-  margin-right: 0.5rem;
+}
+
+.slider-value {
+  float: right;
 }
 
 .emotions-grid {
@@ -32,7 +39,6 @@
   background-color: var(--color-bg);
   color: var(--color-link);
   padding: 0.75rem 1rem;
-  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -40,27 +46,7 @@
   text-align: center;
 }
 
-.emotion-button:hover {
-  transform: translateY(-1px);
-}
-
 .emotion-button.pressed {
   background-color: var(--color-link);
   color: var(--color-bg);
-  transform: translateY(1px);
-}
-
-.emotion-button.pressed:hover {
-  transform: translateY(0px);
-}
-
-.form-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 2rem;
-}
-
-.form-actions button {
-  width: 100%;
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import db from '../../../lib/db';
+import PageTitle from '../../../components/PageTitle';
 
 export default function ViewPage({ params }) {
   const { id } = use(params);
@@ -40,7 +41,7 @@ export default function ViewPage({ params }) {
   if (loading) {
     return (
       <main className="container">
-        <h1>Loading...</h1>
+        <PageTitle />
       </main>
     );
   }
@@ -48,7 +49,7 @@ export default function ViewPage({ params }) {
   if (!thought) {
     return (
       <main className="container">
-        <h1>Thought not found</h1>
+        <PageTitle />
         <Link href="/">
           <button type="button">Back to Overview</button>
         </Link>
@@ -59,7 +60,7 @@ export default function ViewPage({ params }) {
   return (
     <main className="container">
       <header>
-        <h1>Distancing from Thoughts</h1>
+        <PageTitle />
         <div className="view-header">
           <Link href="/">
             <button type="button">← Back to Overview</button>

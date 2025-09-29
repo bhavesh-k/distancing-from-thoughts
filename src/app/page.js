@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import db from '../lib/db';
+import PageTitle from '../components/PageTitle';
 
 export default function Home() {
   const [thoughts, setThoughts] = useState([]);
@@ -38,7 +39,7 @@ export default function Home() {
   if (loading) {
     return (
       <main>
-        <h1>Distancing from Thoughts</h1>
+        <PageTitle />
         <p>Loading...</p>
       </main>
     );
@@ -47,8 +48,9 @@ export default function Home() {
   return (
     <main>
       <header>
-        <h1>Distancing from Thoughts</h1>
-        <p>A mental wellbeing app to help you create distance from persistent thought patterns</p>
+        <PageTitle />
+        <h3>A wellbeing practice to help you create distance from persistent thought patterns 🧠</h3>
+        <p>All the data is stored locally in your browser - your thoughts stay private 😌</p>
       </header>
 
       <section>

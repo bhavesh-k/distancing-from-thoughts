@@ -4,6 +4,9 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import db from '../../../lib/db';
+import PageTitle from '../../../components/PageTitle';
+import Slider from '../../../components/Slider';
+import TextArea from '../../../components/TextArea';
 
 export default function FormPage({ params }) {
   const router = useRouter();
@@ -16,17 +19,23 @@ export default function FormPage({ params }) {
     distressLevel: 0,
     emotions: [],
     otherEmotion: '',
+    bodySensations: '',
+    valuesInterference: 0,
+    beliefStrength: 0,
+    postDistancingValuesInterference: 0,
+    postDistancingBeliefStrength: 0,
+    whatFeelsPossible: '',
+    postDistancingDistressLevel: 0,
     isDraft: true
   });
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
-
-  const emotionOptions = [
-    'Anger', 'Frustration', 'Upset', 'Sadness', 'Hurt', 'Rage', 'Envy',
-    'Jealousy', 'Resentment', 'Fear', 'Worry', 'Shame', 'Guilt', 'Hopelessness'
-  ];
+  const [emotionOptions] = useState(() => [
+    'Angry 😡', 'Frustrated 😤', 'Upset 😩', 'Sad 😢', 'Hurt 🤕', 'Envious 👀',
+    'Jealous 😖', 'Annoyed 😠', 'Blasé 😒', 'Afraid 😱', 'Worried 😟', 'Embarrassed 🫣', 'Guilty 😔', 'Hopeless 😞'
+  ].sort(() => Math.random() - 0.5));
 
   useEffect(() => {
     if (!isNew) {
@@ -35,15 +44,15 @@ export default function FormPage({ params }) {
   }, [id, isNew]);
 
   useEffect(() => {
-    // Auto-save draft every 30 seconds
+    // Auto-save draft every X milliseconds
     const autoSaveInterval = setInterval(() => {
       if (formData.situation || formData.thought) {
         saveDraft();
       }
-    }, 30000);
+    }, 5000);
 
     return () => clearInterval(autoSaveInterval);
-  }, [formData]);
+  }, [formData.situation, formData.thought]);
 
   const loadFormData = async () => {
     try {
@@ -55,6 +64,13 @@ export default function FormPage({ params }) {
           distressLevel: thought.distressLevel || 0,
           emotions: thought.emotions || [],
           otherEmotion: thought.otherEmotion || '',
+          bodySensations: thought.bodySensations || '',
+          valuesInterference: thought.valuesInterference || 0,
+          beliefStrength: thought.beliefStrength || 0,
+          postDistancingValuesInterference: thought.postDistancingValuesInterference || 0,
+          postDistancingBeliefStrength: thought.postDistancingBeliefStrength || 0,
+          whatFeelsPossible: thought.whatFeelsPossible || '',
+          postDistancingDistressLevel: thought.postDistancingDistressLevel || 0,
           isDraft: thought.isDraft || false
         });
       }
@@ -148,7 +164,7 @@ export default function FormPage({ params }) {
   if (loading) {
     return (
       <main>
-        <h1>Loading...</h1>
+        <PageTitle>Loading...</PageTitle>
       </main>
     );
   }
@@ -156,28 +172,23 @@ export default function FormPage({ params }) {
   return (
     <main>
       <header>
-        <h1>Distance from Thoughts</h1>
+        <PageTitle />
         <div>
           {lastSaved && (
-            <span>
-              DRAFT SAVED {formatLastSaved(lastSaved)}
-            </span>
+            <span><i>
+              Draft Saved {formatLastSaved(lastSaved)}
+            </i></span>
           )}
           {saving && <span>Saving...</span>}
         </div>
       </header>
 
       <form onSubmit={handleSubmit}>
-        <label htmlFor="situation">
-          What situation prompted the thought?
-        </label>
-        <textarea
+        <TextArea
           id="situation"
+          label="What situation prompted the thought?"
           value={formData.situation}
-          onChange={(e) => handleInputChange('situation', e.target.value)}
-          placeholder="Describe the situation that led to this thought..."
-          rows="4"
-          style={{ resize: "none" }}
+          onChange={(value) => handleInputChange('situation', value)}
         />
 
         <label htmlFor="thought">
@@ -188,23 +199,14 @@ export default function FormPage({ params }) {
           id="thought"
           value={formData.thought}
           onChange={(e) => handleInputChange('thought', e.target.value)}
-          placeholder="Write down the specific thought you want to distance yourself from..."
         />
 
-        <label htmlFor="distressLevel">
-          How much distress am I experiencing because of this thought right now?
-        </label>
-        <div className="slider-container">
-          <input
-            type="range"
-            id="distressLevel"
-            min="0"
-            max="10"
-            value={formData.distressLevel}
-            onChange={(e) => handleInputChange('distressLevel', parseInt(e.target.value))}
-          />
-          <span className="slider-value">{formData.distressLevel}</span>
-        </div>
+        <Slider
+          id="distressLevel"
+          label="How much distress am I experiencing because of this thought right now?"
+          value={formData.distressLevel}
+          onChange={(value) => handleInputChange('distressLevel', value)}
+        />
 
         <label>What emotions do I notice when this thought comes up?</label>
         <div className="emotions-grid">
@@ -231,15 +233,67 @@ export default function FormPage({ params }) {
           placeholder="Describe any other emotions..."
         />
 
-        <div>
+        <TextArea
+          id="bodySensations"
+          label="What sensations do I feel in my body when this thought comes up?"
+          value={formData.bodySensations}
+          onChange={(value) => handleInputChange('bodySensations', value)}
+          placeholder="Tightness in my shoulders, clenched jaw, pain across chest, lump in my throat, pit in my stomach"
+        />
+
+        <Slider
+          id="valuesInterference"
+          label="How much is the thought stopping me from acting toward my values?"
+          value={formData.valuesInterference}
+          onChange={(value) => handleInputChange('valuesInterference', value)}
+        />
+
+        <Slider
+          id="beliefStrength"
+          label="How strongly do I believe the thought?"
+          value={formData.beliefStrength}
+          onChange={(value) => handleInputChange('beliefStrength', value)}
+        />
+
+        <section><aside><h3>TODO: PLACEHOLDER FOR STRATEGIES TO CREATE DISTANCE FROM THE THOUGHT</h3></aside></section>
+
+        <Slider
+          id="postDistancingValuesInterference"
+          label="After distancing from the thought, how much is this thought stopping me from acting toward my values?"
+          value={formData.postDistancingValuesInterference}
+          onChange={(value) => handleInputChange('postDistancingValuesInterference', value)}
+        />
+
+        <Slider
+          id="postDistancingBeliefStrength"
+          label="After distancing from the thought, how strongly do I believe the thought?"
+          value={formData.postDistancingBeliefStrength}
+          onChange={(value) => handleInputChange('postDistancingBeliefStrength', value)}
+        />
+
+        <TextArea
+          id="whatFeelsPossible"
+          label="What (if anything) feels more possible for me to do now?"
+          value={formData.whatFeelsPossible}
+          onChange={(value) => handleInputChange('whatFeelsPossible', value)}
+        />
+
+        <Slider
+          id="postDistancingDistressLevel"
+          label="How much distress am I experiencing because of this thought now (after practicing)?"
+          value={formData.postDistancingDistressLevel}
+          onChange={(value) => handleInputChange('postDistancingDistressLevel', value)}
+        />
+
+        <section>
           <button type="submit" disabled={saving}>
             {saving ? 'Saving...' : 'Submit'}
           </button>
-          <Link href="/">
-            <button type="button">Cancel</button>
-          </Link>
-        </div>
+        </section>
+        <br></br>
+        <section><Link href="/"><em>Save and Continue Later</em></Link></section>
+
       </form>
-    </main>
+    </main >
   );
 }
